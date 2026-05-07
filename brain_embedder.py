@@ -9,7 +9,7 @@ from __future__ import annotations
 import asyncio
 import logging
 from collections import OrderedDict
-from typing import Optional, Sequence
+from collections.abc import Sequence
 
 import httpx
 
@@ -23,7 +23,7 @@ class _LRU(OrderedDict):
         super().__init__()
         self.capacity = capacity
 
-    def get_or_none(self, key: str) -> Optional[list[float]]:
+    def get_or_none(self, key: str) -> list[float] | None:
         if key not in self:
             return None
         self.move_to_end(key)
@@ -87,7 +87,7 @@ class Embedder:
         return list(vec)
 
 
-_singleton: Optional[Embedder] = None
+_singleton: Embedder | None = None
 
 
 def get_embedder() -> Embedder:

@@ -6,10 +6,10 @@ are async and assume the pool has been initialized via `init_pool()`.
 """
 from __future__ import annotations
 
-import json
 import logging
+from collections.abc import Iterable, Sequence
 from contextlib import asynccontextmanager
-from typing import Any, Iterable, Optional, Sequence
+from typing import Any
 
 import asyncpg
 
@@ -17,7 +17,7 @@ from brain_config import CONFIG
 
 logger = logging.getLogger(__name__)
 
-_pool: Optional[asyncpg.Pool] = None
+_pool: asyncpg.Pool | None = None
 
 
 async def init_pool() -> asyncpg.Pool:
@@ -487,7 +487,7 @@ async def touch_access(table: str, entry_ids: Iterable[int]) -> None:
         )
 
 
-async def hydrate(table: str, entry_id: int) -> Optional[dict[str, Any]]:
+async def hydrate(table: str, entry_id: int) -> dict[str, Any] | None:
     async with acquire() as conn:
         row = await conn.fetchrow(
             f"SELECT * FROM {table} WHERE entry_id = $1", entry_id

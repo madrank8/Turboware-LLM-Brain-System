@@ -11,7 +11,7 @@ from __future__ import annotations
 import asyncio
 import logging
 import re
-from typing import Any, Optional
+from typing import Any
 
 try:
     from litellm.integrations.custom_logger import CustomLogger
@@ -57,7 +57,7 @@ class BrainHook(CustomLogger):
         cache: Any,
         data: dict,
         call_type: str,
-    ) -> Optional[dict]:
+    ) -> dict | None:
         try:
             await self._ensure_init()
             if not self._is_coding_call(data, call_type):

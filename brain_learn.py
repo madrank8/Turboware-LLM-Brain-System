@@ -3,8 +3,8 @@ from __future__ import annotations
 
 import logging
 
-from brain_config import CONFIG
 import brain_db as db
+from brain_config import CONFIG
 from brain_embedder import get_embedder
 
 logger = logging.getLogger(__name__)

@@ -8,13 +8,13 @@ from __future__ import annotations
 
 import logging
 import re
-from typing import Any, Iterable, Optional
+from typing import Any
 
 import httpx
 import yaml
 
-from brain_config import CONFIG
 import brain_db as db
+from brain_config import CONFIG
 from brain_embedder import get_embedder
 
 logger = logging.getLogger(__name__)
@@ -78,7 +78,7 @@ async def _fetch_tree(http: httpx.AsyncClient, owner: str, repo: str, ref: str) 
     return resp.json().get("tree", [])
 
 
-def _parse_persona(text: str, path: str) -> Optional[dict[str, Any]]:
+def _parse_persona(text: str, path: str) -> dict[str, Any] | None:
     if not text.startswith("---"):
         return None
     parts = text.split("---", 2)

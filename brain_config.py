@@ -7,8 +7,8 @@ the LiteLLM service unit's Environment= directives.
 from __future__ import annotations
 
 import os
+from collections.abc import Sequence
 from dataclasses import dataclass, field
-from typing import Sequence
 
 
 def _env_int(name: str, default: int) -> int:

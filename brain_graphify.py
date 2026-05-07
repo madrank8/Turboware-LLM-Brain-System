@@ -26,8 +26,8 @@ import tempfile
 from pathlib import Path
 from typing import Any
 
-from brain_config import CONFIG
 import brain_db as db
+from brain_config import CONFIG
 from brain_embedder import get_embedder
 
 logger = logging.getLogger(__name__)

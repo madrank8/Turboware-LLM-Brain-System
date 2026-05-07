@@ -18,11 +18,12 @@ import logging
 import re
 import threading
 import time
+from collections.abc import Sequence
 from dataclasses import dataclass, field
-from typing import Any, Optional, Sequence
+from typing import Any
 
-from brain_config import CONFIG
 import brain_db as db
+from brain_config import CONFIG
 from brain_embedder import get_embedder
 
 logger = logging.getLogger(__name__)
@@ -112,7 +113,7 @@ class RetrievalResult:
 # Retrieval entry point
 # ---------------------------------------------------------------------------
 
-async def retrieve(query: str, *, code_blocks: Optional[list[str]] = None) -> RetrievalResult:
+async def retrieve(query: str, *, code_blocks: list[str] | None = None) -> RetrievalResult:
     _RERANKER.warm()
     start = time.perf_counter()
     timings: dict[str, float] = {}
@@ -138,7 +139,7 @@ async def retrieve(query: str, *, code_blocks: Optional[list[str]] = None) -> Re
             personas, contexts, skills = await asyncio.gather(
                 persona_task, context_task, skills_task
             )
-    except (asyncio.TimeoutError, TimeoutError):
+    except TimeoutError:
         logger.warning("retrieval exceeded %dms budget", CONFIG.retrieval_budget_ms)
         return RetrievalResult(timings_ms={"total_ms": (time.perf_counter() - start) * 1000})
     except Exception as exc:
@@ -195,7 +196,7 @@ async def _rerank_and_trim(query: str, hits: list[dict[str, Any]]) -> list[dict[
         scores = await loop.run_in_executor(
             None, _RERANKER.score, query, [c["body"] or c["title"] or "" for c in candidates]
         )
-        for c, s in zip(candidates, scores):
+        for c, s in zip(candidates, scores, strict=True):
             c["rerank_score"] = s
         candidates.sort(key=lambda h: h.get("rerank_score", 0.0), reverse=True)
     return candidates[: CONFIG.rerank_top_k]

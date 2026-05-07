@@ -10,10 +10,9 @@ truncation if the combined messages exceed model context.
 """
 from __future__ import annotations
 
-from typing import Iterable
+from collections.abc import Iterable
 
 from brain_retriever import RetrievalResult
-
 
 _HEADER = "# Brain Context\n\nThe following context was retrieved from your team's shared memory.\n"
 

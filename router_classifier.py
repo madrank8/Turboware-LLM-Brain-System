@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import logging
 import re
-from typing import Any, Optional
+from typing import Any
 
 try:
     from litellm.integrations.custom_logger import CustomLogger
@@ -38,7 +38,7 @@ class RouterClassifier(CustomLogger):
         cache: Any,
         data: dict,
         call_type: str,
-    ) -> Optional[dict]:
+    ) -> dict | None:
         try:
             if call_type not in {"completion", "acompletion"}:
                 return data
