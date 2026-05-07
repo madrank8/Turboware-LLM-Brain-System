@@ -1,0 +1,13 @@
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+ignore = [
+  "E501",  # line length handled by formatter, not blocking
+  "B008",  # function call in argument default — used for dataclass field()
+]
+
+[tool.ruff.lint.per-file-ignores]
+"brain_db.py" = ["E712"]
