@@ -1,0 +1,66 @@
+# Sample LiteLLM config wiring the Brain hooks and smart-router.
+# Copy to config.yaml, fill in API keys via environment variables, and
+# start LiteLLM with: litellm --config config.yaml --port 4000
+
+litellm_settings:
+  callbacks:
+    - router_classifier.proxy_handler_instance
+    - brain_hook.proxy_handler_instance
+  drop_params: true
+
+model_list:
+  - model_name: deepseek-v4-flash
+    litellm_params:
+      model: deepseek/deepseek-v4-flash
+      api_key: os.environ/DEEPSEEK_API_KEY
+  - model_name: deepseek-v4-pro
+    litellm_params:
+      model: deepseek/deepseek-v4-pro
+      api_key: os.environ/DEEPSEEK_API_KEY
+  - model_name: kimi-k2.6
+    litellm_params:
+      model: moonshot/kimi-k2.6
+      api_key: os.environ/MOONSHOT_API_KEY
+  - model_name: grok-4.3
+    litellm_params:
+      model: xai/grok-4.3
+      api_key: os.environ/XAI_API_KEY
+
+  - model_name: smart-router
+    litellm_params:
+      model: auto_router/complexity_router
+      complexity_router_config:
+        tiers:
+          SIMPLE: deepseek-v4-flash
+          MEDIUM: deepseek-v4-flash
+          COMPLEX: grok-4.3
+          REASONING: deepseek-v4-pro
+        dimension_weights:
+          tokenCount: 0.10
+          codePresence: 0.20
+          reasoningMarkers: 0.30
+          technicalTerms: 0.25
+          simpleIndicators: 0.05
+          multiStepPatterns: 0.03
+          questionComplexity: 0.02
+        tier_boundaries:
+          simple_medium: 0.10
+          medium_complex: 0.22
+          complex_reasoning: 0.42
+        technical_keywords:
+          - architecture
+          - distributed
+          - scalable
+          - refactor
+          - migration
+          - concurrency
+          - throughput
+        reasoning_keywords:
+          - "step by step"
+          - "think through"
+          - prove
+          - theorem
+      complexity_router_default_model: deepseek-v4-flash
+
+general_settings:
+  database_url: os.environ/DATABASE_URL
